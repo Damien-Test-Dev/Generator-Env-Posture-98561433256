@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brand Pose & Kirby Theme — JSON Generator</title>
+  <meta name="description" content="Génère un JSON combinant une posture et un environnement Kirby, en gardant un personnage de branding fixe." />
+
+  <!-- CSS (on le crée au prochain step) -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="header__left">
+      <div class="logo" aria-hidden="true">BP</div>
+      <div>
+        <h1 class="title">Brand Pose & Kirby Theme</h1>
+        <p class="subtitle">
+          Génère une combinaison <strong>Posture × Environnement</strong> et exporte un JSON “IA-ready”.
+        </p>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <span class="badge" id="appVersionBadge">v0.1.0</span>
+      <span class="status" id="status">Prêt.</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Personnage de branding (fixe)</h2>
+
+      <div class="formRow">
+        <label for="brandName">Nom du personnage</label>
+        <input id="brandName" type="text" placeholder="Ex: Kirby-Style CTO (ton perso de branding)" autocomplete="off" />
+        <p class="hint">Ce champ ne change pas : c’est ton “anchor asset”.</p>
+      </div>
+
+      <div class="formRow">
+        <label for="brandDescription">Description / prompt de base</label>
+        <textarea id="brandDescription" rows="6" placeholder="Ex: personnage stylisé, palette de couleurs, vêtements, accessoires, style graphique, etc."></textarea>
+        <p class="hint">Objectif : donner à l’IA le contexte stable du personnage, puis varier posture + décor.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Génération</h2>
+
+      <div class="grid2">
+        <div class="formRow">
+          <label for="seed">Seed (reproductible)</label>
+          <div class="inline">
+            <input id="seed" type="text" placeholder="Ex: 20260131" autocomplete="off" />
+            <button class="btn btn--ghost" id="randomSeedBtn" type="button" aria-label="Générer une seed aléatoire">↻</button>
+          </div>
+          <p class="hint">Même seed = même résultat. Vide = seed auto.</p>
+        </div>
+
+        <div class="formRow">
+          <label>Options</label>
+          <label class="check">
+            <input id="prettyJson" type="checkbox" checked />
+            JSON formaté (lisible)
+          </label>
+
+          <label class="check">
+            <input id="avoidRepeats" type="checkbox" checked />
+            Éviter les répétitions (tant que possible)
+          </label>
+
+          <label class="check">
+            <input id="saveHistory" type="checkbox" checked />
+            Sauver l’historique en local
+          </label>
+
+          <p class="hint">On gère ça côté JS (localStorage) — aucun backend.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--primary" id="generateBtn" type="button">Générer</button>
+        <button class="btn" id="copyBtn" type="button" disabled>Copier le JSON</button>
+        <button class="btn" id="downloadBtn" type="button" disabled>Télécharger .json</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Dernière génération (aperçu)</h2>
+      <div class="preview">
+        <div class="preview__item">
+          <div class="preview__label">Posture</div>
+          <div class="preview__value" id="posePreview">—</div>
+        </div>
+        <div class="preview__item">
+          <div class="preview__label">Environnement Kirby</div>
+          <div class="preview__value" id="envPreview">—</div>
+        </div>
+      </div>
+
+      <p class="hint">
+        Le JSON final servira de payload pour ta génération d’image IA :
+        <strong>perso fixe</strong> + <strong>posture</strong> + <strong>décor</strong>.
+      </p>
+    </section>
+
+    <section class="card card--output">
+      <div class="outputHead">
+        <h2>Sortie JSON</h2>
+        <div class="micro">
+          <button class="btn btn--ghost" id="clearBtn" type="button">Clear</button>
+        </div>
+      </div>
+
+      <textarea
+        id="jsonOutput"
+        class="mono"
+        spellcheck="false"
+        placeholder="Clique sur “Générer” pour produire un JSON…"
+      ></textarea>
+
+      <div class="schema">
+        <details>
+          <summary>Schéma cible (référence)</summary>
+          <pre class="mono"><code>{
+  "meta": {
+    "id": "string",
+    "generatedAt": "ISO-8601",
+    "seed": "string|number",
+    "version": "string"
+  },
+  "brandCharacter": {
+    "name": "string",
+    "description": "string"
+  },
+  "selection": {
+    "pose": "string",
+    "kirbyEnvironment": "string"
+  }
+}</code></pre>
+          <p class="hint">On garde un schéma stable pour industrialiser plus tard (pipeline IA, dataset, etc.).</p>
+        </details>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Historique</h2>
+      <div class="history">
+        <button class="btn btn--ghost" id="clearHistoryBtn" type="button">Vider l’historique</button>
+        <ul class="historyList" id="historyList" aria-live="polite"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Client-side only — aucune donnée n’est envoyée.</span>
+    <span class="dot">•</span>
+    <span>GitHub Pages compatible.</span>
+  </footer>
+
+  <!-- JS (on le crée après data.js) -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
